@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 const anglerService = new AnglerService();
 
 export class AnglerController {
-    getAnglers = async (res: Response): Promise<void> => {
+    getAnglers = async (req: Request, res: Response): Promise<void> => {
 
  /**
  * @openapi
@@ -58,7 +58,7 @@ getAnglerById = async (req: Request, res: Response): Promise<void> => {
  */
   try {
     const id = String(req.params.id);
-    if (!Types.ObjectId.isValid(id)) {
+    if (!Types.ObjectId.isValid(id)) { // used types since it didnt like the string in req.params.id
       res.status(400).json({ message: 'Invalid angler ID' });
       return;
     }

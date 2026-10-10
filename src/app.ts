@@ -52,7 +52,7 @@ const startServer = async () => {
 };
 
 startServer();
-app.use(middleware);
+app.use(middleware, anglerRoutes);
 app.use(express.json());
 app.use(authenticateKey);
 app.use('/api/v1/anglers', anglerRoutes)
