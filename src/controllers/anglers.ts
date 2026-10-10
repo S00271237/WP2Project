@@ -76,4 +76,31 @@ getAnglerById = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Error retrieving angler' });
   }
 };
+
+createAngler = async (req: Request, res: Response): Promise<void> => {
+/**
+ * @openapi
+ * /anglers:
+ *   post:
+ *     summary: Create an angler profile for the logged-in user
+ *     tags:
+ *       - Anglers
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateAnglerInput'
+ *     responses:
+ *       201:
+ *         description: Successfully created the angler
+ *       400:
+ *         description: Invalid input data
+ *       409:
+ *         description: This user already has an angler profile
+ *       500:
+ *         description: Internal server error
+ */
+
+
 }
