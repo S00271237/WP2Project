@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 
 import { Types } from 'mongoose';
 import { UserService } from '../services/users';
-import { createUserZSchema } from '../models/users';
 
 const userService = new UserService();
 
