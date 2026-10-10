@@ -11,7 +11,7 @@ Content-Type: application/json
 x-api-key: test
 
 {
-  "email": "john.doe@example.com",
+  "email": "jane.doe@example.com",
   "password": "SecurePassword123"
 }
 
@@ -107,7 +107,7 @@ x-api-key: test
 
 {
   "user": "{{userId}}",
-  "name": "Dave"
+  "name": "Dravid"
 }
 
 ###
