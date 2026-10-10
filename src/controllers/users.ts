@@ -54,10 +54,16 @@ createUser = async (req: Request, res: Response): Promise<void> => {
    *       500:
    *         description: Internal server error
    */
-    const validation = createUserZSchema.safeParse(req.body);
-    if (!validation.success) {
-      res.status(400).json({ message: 'Validation failed', errors: validation.error.issues });
+  try {
+    const newUser = await userService.createUser(req.body);
+    res.status(201).json(newUser);
+  } catch (error) {
+    if ((error as { code?: number }).code === 11000) {
+      res.status(409).json({ message: 'A user with this email already exists' });
       return;
     }
-}
+    console.error(error);
+    res.status(500).json({ message: 'Error creating user' });
+  }
+};
 };
