@@ -14,6 +14,8 @@ import swaggerUi from 'swagger-ui-express';
 
 import {swaggerSpec} from './config/swagger';
 
+import userRoutes from './routes/users';
+
 
 
 //const PORT = process.env.PORT || 3120; 
@@ -54,5 +56,6 @@ app.use(middleware, anglerRoutes);
 app.use(express.json());
 app.use(authenticateKey);
 app.use('/api/v1/anglers', anglerRoutes)
+app.use('/api/v1/users', userRoutes);
 
 export { app };
