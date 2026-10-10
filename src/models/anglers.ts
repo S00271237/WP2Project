@@ -17,15 +17,16 @@ export interface ISession {
   location: ILocation;
   startTime: Date;
   endTime?: Date;
-  catches: ICatch[];
+  catches: Types.DocumentArray<ICatch>;
 }
 
 export interface IAngler {
   user: Types.ObjectId;
   name: string;
-  sessions: ISession[];
+  sessions: Types.DocumentArray<ISession>;
 }
 
+// Schemas for Mongoose
 const catchSchema = new Schema<ICatch>({
   species: { type: String, required: true, trim: true },
   quantity: { type: Number, required: true, min: 1, default: 1 },
@@ -57,6 +58,8 @@ const anglerSchema = new Schema<IAngler>(
   { timestamps: true }
 );
 
+
+// Zod schemas for validation
 export const catchZSchema = z.object({
   species: z.string().trim().min(1),
   quantity: z.number().int().min(1).default(1),
@@ -150,5 +153,6 @@ export const updateSessionZSchema = sessionBaseZSchema.partial();
  *                 type: string
  *                 example: Spinner
  */
+
 
 export const AnglerModel = model<IAngler>('Angler', anglerSchema);
