@@ -156,5 +156,34 @@ export const updateSessionZSchema = sessionBaseZSchema.partial();
  *                 example: Spinner
  */
 
+export const updateCatchZSchema = z.object({
+  /**
+   * @openapi
+   * components:
+   *   schemas:
+   *     UpdateCatchInput:
+   *       type: object
+   *       properties:
+   *         species:
+   *           type: string
+   *           example: Pike
+   *         quantity:
+   *           type: integer
+   *           minimum: 1
+   *           example: 1
+   *         sizeCm:
+   *           type: number
+   *           minimum: 0
+   *           example: 72
+   *         bait:
+   *           type: string
+   *           example: Spinner
+   */
+
+  species: z.string().trim().min(1).optional(),
+  quantity: z.number().int().min(1).optional(),
+  sizeCm: z.number().min(0).optional(),
+  bait: z.string().trim().optional(),
+});
 
 export const AnglerModel = model<IAngler>('Angler', anglerSchema);

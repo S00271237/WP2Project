@@ -1,17 +1,18 @@
 import express, {Application, Request, Response} from "express" ; 
 
-import anglerRoutes from './routes/anlgers';
+import anglerRoutes from './routes/angler';
 
-import { env } from "./config/env";
+import { env } from './config/env';
 
-import { connectDB } from "./config/database";
+import { connectDB } from './config/database';
 
 import {authenticateKey} from './middleware/auth.middleware';
 
 import { middleware } from './middleware/middleware';
 
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './config/swagger';
+
+import {swaggerSpec} from './config/swagger';
 
 
 

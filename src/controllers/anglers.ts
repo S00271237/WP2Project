@@ -261,4 +261,318 @@ addSessionToAngler = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Error adding session to angler' });
   }
 }
+
+
+updateSessionInAngler = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/{anglerId}/sessions/{sessionId}:
+   *   put:
+   *     summary: Update a fishing session in an angler's profile
+   *     tags:
+   *       - Anglers
+   *     parameters:
+   *       - in: path
+   *         name: anglerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the angler who owns the session
+   *       - in: path
+   *         name: sessionId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the session to update
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UpdateSessionInput'
+   *     responses:
+   *       200:
+   *         description: Successfully updated the fishing session
+   *       400:
+   *         description: Invalid ID, invalid input data, or end time before start time
+   *       404:
+   *         description: Angler or session not found
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const anglerId = String(req.params.anglerId);
+    const sessionId = String(req.params.sessionId);
+    if (!Types.ObjectId.isValid(anglerId) || !Types.ObjectId.isValid(sessionId)) {
+      res.status(400).json({ message: 'Invalid angler ID or session ID' });
+      return;
+    }
+
+    const updatedAngler = await anglerService.updateSessioninAngler(anglerId, sessionId, req.body);
+    if (!updatedAngler) {
+      res.status(404).json({ message: 'Angler or session not found' });
+      return;
+    }
+
+    res.status(200).json(updatedAngler);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'endTime must be after startTime') {
+      res.status(400).json({ message: error.message });
+      return;
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Error updating session' });
+  }
+}
+
+deleteSessionFromAngler = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/{anglerId}/sessions/{sessionId}:
+   *   delete:
+   *     summary: Delete a fishing session from an angler's profile
+   *     tags:
+   *       - Anglers
+   *     parameters:
+   *       - in: path
+   *         name: anglerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the angler who owns the session
+   *       - in: path
+   *         name: sessionId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the session to delete
+   *     responses:
+   *       200:
+   *         description: Successfully deleted the fishing session
+   *       400:
+   *         description: Invalid angler ID or session ID
+   *       404:
+   *         description: Angler or session not found
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const anglerId = String(req.params.anglerId);
+    const sessionId = String(req.params.sessionId);
+    if (!Types.ObjectId.isValid(anglerId) || !Types.ObjectId.isValid(sessionId)) {
+      res.status(400).json({ message: 'Invalid angler ID or session ID' });
+      return;
+    }
+
+    const updatedAngler = await anglerService.deleteSessionFromAngler(anglerId, sessionId);
+    if (!updatedAngler) {
+      res.status(404).json({ message: 'Angler or session not found' });
+      return;
+    }
+
+    res.status(200).json(updatedAngler);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting session' });
+  }
+}
+
+addCatchToSession = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/{anglerId}/sessions/{sessionId}/catches:
+   *   post:
+   *     summary: Add a new catch to a fishing session in an angler's profile
+   *     tags:
+   *       - Anglers
+   *     parameters:
+   *       - in: path
+   *         name: anglerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the angler who owns the session
+   *       - in: path
+   *         name: sessionId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the session to add the catch to
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/AddCatchInput'
+   *     responses:
+   *       201:
+   *         description: Successfully added the catch
+   *       400:
+   *         description: Invalid ID or invalid input data
+   *       404:
+   *         description: Angler or session not found
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const anglerId = String(req.params.anglerId);
+    const sessionId = String(req.params.sessionId);
+    if (!Types.ObjectId.isValid(anglerId) || !Types.ObjectId.isValid(sessionId)) {
+      res.status(400).json({ message: 'Invalid angler ID or session ID' });
+      return;
+    }
+
+    const updatedAngler = await anglerService.addCatchToSession(anglerId, sessionId, req.body);
+    if (!updatedAngler) {
+      res.status(404).json({ message: 'Angler or session not found' });
+      return;
+    }
+
+    res.status(201).json(updatedAngler);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error adding catch to session' });
+  }
+}
+
+updateCatchInSession = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/{anglerId}/sessions/{sessionId}/catches/{catchId}:
+   *   put:
+   *     summary: Update a catch in a fishing session
+   *     tags:
+   *       - Anglers
+   *     parameters:
+   *       - in: path
+   *         name: anglerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the angler who owns the session
+   *       - in: path
+   *         name: sessionId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the session containing the catch
+   *       - in: path
+   *         name: catchId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the catch to update
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UpdateCatchInput'
+   *     responses:
+   *       200:
+   *         description: Successfully updated the catch
+   *       400:
+   *         description: Invalid ID or invalid input data
+   *       404:
+   *         description: Angler, session or catch not found
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const anglerId = String(req.params.anglerId);
+    const sessionId = String(req.params.sessionId);
+    const catchId = String(req.params.catchId);
+    if (
+      !Types.ObjectId.isValid(anglerId) ||
+      !Types.ObjectId.isValid(sessionId) ||
+      !Types.ObjectId.isValid(catchId)
+    ) {
+      res.status(400).json({ message: 'Invalid angler ID, session ID or catch ID' });
+      return;
+    }
+
+    const updatedAngler = await anglerService.updateCatchInSession(
+      anglerId,
+      sessionId,
+      catchId,
+      req.body
+    );
+    if (!updatedAngler) {
+      res.status(404).json({ message: 'Angler, session or catch not found' });
+      return;
+    }
+
+    res.status(200).json(updatedAngler);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating catch' });
+  }
+}
+
+deleteCatchFromSession = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/{anglerId}/sessions/{sessionId}/catches/{catchId}:
+   *   delete:
+   *     summary: Delete a catch from a fishing session
+   *     tags:
+   *       - Anglers
+   *     parameters:
+   *       - in: path
+   *         name: anglerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the angler who owns the session
+   *       - in: path
+   *         name: sessionId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the session containing the catch
+   *       - in: path
+   *         name: catchId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the catch to delete
+   *     responses:
+   *       200:
+   *         description: Successfully deleted the catch
+   *       400:
+   *         description: Invalid angler ID, session ID or catch ID
+   *       404:
+   *         description: Angler, session or catch not found
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const anglerId = String(req.params.anglerId);
+    const sessionId = String(req.params.sessionId);
+    const catchId = String(req.params.catchId);
+    if (
+      !Types.ObjectId.isValid(anglerId) ||
+      !Types.ObjectId.isValid(sessionId) ||
+      !Types.ObjectId.isValid(catchId)
+    ) {
+      res.status(400).json({ message: 'Invalid angler ID, session ID or catch ID' });
+      return;
+    }
+
+    const updatedAngler = await anglerService.deleteCatchFromSession(
+      anglerId,
+      sessionId,
+      catchId
+    );
+    if (!updatedAngler) {
+      res.status(404).json({ message: 'Angler, session or catch not found' });
+      return;
+    }
+
+    res.status(200).json(updatedAngler);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting catch' });
+  }
 };
+}
