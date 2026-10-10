@@ -18,7 +18,7 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-export const registerUserZSchema = z.object({
+export const createUserZSchema = z.object({
   /**
  * @openapi
  * components:
@@ -71,7 +71,6 @@ export const updateUserZSchema = z.object({
   email: z.string().trim().toLowerCase().email().optional(),
   password: z.string().min(8).optional(),
 });
-
 
 
 
