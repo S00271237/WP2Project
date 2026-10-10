@@ -156,6 +156,8 @@ export const updateSessionZSchema = sessionBaseZSchema.partial();
  *                 example: Spinner
  */
 
+
+
 export const updateCatchZSchema = z.object({
   /**
    * @openapi
