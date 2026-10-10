@@ -1,27 +1,410 @@
-@endpointAngler = http://localhost:3010/api/v1/anglers
 @endpointUser = http://localhost:3010/api/v1/users
+@endpointAngler = http://localhost:3010/api/v1/anglers
 
 ###
-# Get all anglers
-GET {{endpointAngler}} HTTP/1.1
-Content-Type: application/json
-x-api-key: test
+# Users
 
-###
-POST {{endpointAngler}} HTTP/1.1
-Content-Type: application/json
-x-api-key: test
-
-{
-  "name": "Dave",
-}
-###
+# create a user
+# @name createUser
 POST {{endpointUser}} HTTP/1.1
 Content-Type: application/json
 x-api-key: test
 
 {
-  "name": "John Doe",
   "email": "john.doe@example.com",
   "password": "SecurePassword123"
 }
+
+###
+@userId = {{createUser.response.body._id}}
+
+
+###
+# invalid email
+POST {{endpointUser}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "not-an-email",
+  "password": "SecurePassword123"
+}
+
+###
+# password too short
+POST {{endpointUser}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "short@example.com",
+  "password": "abc"
+}
+
+###
+# missing password
+POST {{endpointUser}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "nopass@example.com"
+}
+
+###
+# get all users 
+GET {{endpointUser}} HTTP/1.1
+x-api-key: test
+
+###
+# update the user's email
+PUT {{endpointUser}}/{{userId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "john.updated@example.com"
+}
+
+###
+# update with an invalid email
+PUT {{endpointUser}}/{{userId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "nope"
+}
+
+###
+# invalid user id format
+PUT {{endpointUser}}/sillyUserID HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "someone@example.com"
+}
+
+###
+# valid id format but no such user
+PUT {{endpointUser}}/000000000000000000000000 HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "email": "someone@example.com"
+}
+
+###
+# anglers
+
+#  create an angler linked to the user
+# @name createAngler
+POST {{endpointAngler}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "user": "{{userId}}",
+  "name": "Dave"
+}
+
+###
+@anglerId = {{createAngler.response.body._id}}
+
+###
+# a second angler for the same user
+POST {{endpointAngler}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "user": "{{userId}}",
+  "name": "Dave Again"
+}
+
+###
+# name too short
+POST {{endpointAngler}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "user": "{{userId}}",
+  "name": "D"
+}
+
+###
+# missing name
+POST {{endpointAngler}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "user": "{{userId}}"
+}
+
+###
+# invalid user id
+POST {{endpointAngler}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "user": "not-an-id",
+  "name": "Dave"
+}
+
+###
+# get all anglers
+GET {{endpointAngler}} HTTP/1.1
+x-api-key: test
+
+###
+# get one angler
+GET {{endpointAngler}}/{{anglerId}} HTTP/1.1
+x-api-key: test
+
+###
+# invalid angler id format
+GET {{endpointAngler}}/sillyAnglerID HTTP/1.1
+x-api-key: test
+
+###
+# valid id format but no such angler
+GET {{endpointAngler}}/000000000000000000000000 HTTP/1.1
+x-api-key: test
+
+###
+# update the angler's name
+PUT {{endpointAngler}}/{{anglerId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "name": "James"
+}
+
+###
+# update with a name that is too long
+PUT {{endpointAngler}}/{{anglerId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "name": "This name is far too long to be accepted by the validation rules set up"
+}
+
+###
+# sessions
+
+# add a session
+# @name addSession
+POST {{endpointAngler}}/{{anglerId}}/sessions HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "location": {
+    "area": "Lough Key",
+    "waterBody": "Lake"
+  },
+  "startTime": "2026-10-04T07:30:00.000Z"
+}
+
+###
+@sessionId = {{addSession.response.body.$.sessions[0]._id}}
+
+###
+# session with no location
+POST {{endpointAngler}}/{{anglerId}}/sessions HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "startTime": "2026-10-04T07:30:00.000Z"
+}
+
+###
+# session with no start time
+POST {{endpointAngler}}/{{anglerId}}/sessions HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "location": {
+    "area": "Lough Key",
+    "waterBody": "Lake"
+  }
+}
+
+###
+# session added to an angler that does not exist
+POST {{endpointAngler}}/000000000000000000000000/sessions HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "location": {
+    "area": "Lough Key",
+    "waterBody": "Lake"
+  },
+  "startTime": "2026-10-04T07:30:00.000Z"
+}
+
+###
+# set the end time
+PUT {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "endTime": "2026-10-04T12:15:00.000Z"
+}
+
+###
+# end time before the start time
+PUT {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "endTime": "2026-10-04T06:00:00.000Z"
+}
+
+###
+# change the location
+PUT {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "location": {
+    "area": "River Shannon, Carrick",
+    "waterBody": "River"
+  }
+}
+
+###
+# session id that does not exist
+PUT {{endpointAngler}}/{{anglerId}}/sessions/000000000000000000000000 HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "endTime": "2026-10-04T12:15:00.000Z"
+}
+
+###
+# catchs
+
+# add a catch
+# @name addCatch
+POST {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "species": "Pike",
+  "quantity": 1,
+  "sizeCm": 68,
+  "bait": "Spinner"
+}
+
+###
+@catchId = {{addCatch.response.body.$.sessions[0].catches[0]._id}}
+
+###
+# add a catch with only the species
+POST {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "species": "Perch"
+}
+
+###
+# catch with no species
+POST {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "quantity": 2,
+  "sizeCm": 30
+}
+
+###
+# negative size
+POST {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "species": "Pike",
+  "sizeCm": -5
+}
+
+###
+# catch added to a session that does not exist
+POST {{endpointAngler}}/{{anglerId}}/sessions/000000000000000000000000/catches HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "species": "Pike"
+}
+
+###
+# correct the size of the first catch
+PUT {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches/{{catchId}} HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "sizeCm": 72
+}
+
+###
+# catch id that does not exist
+PUT {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches/000000000000000000000000 HTTP/1.1
+Content-Type: application/json
+x-api-key: test
+
+{
+  "sizeCm": 72
+}
+
+###
+# delete the first catch
+DELETE {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches/{{catchId}} HTTP/1.1
+x-api-key: test
+
+###
+# delete the same catch again
+DELETE {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}}/catches/{{catchId}} HTTP/1.1
+x-api-key: test
+
+###
+# deletions
+
+# delete the session
+DELETE {{endpointAngler}}/{{anglerId}}/sessions/{{sessionId}} HTTP/1.1
+x-api-key: test
+
+###
+# delete the angler with no api key
+DELETE {{endpointAngler}}/{{anglerId}} HTTP/1.1
+
+###
+# delete the angler
+DELETE {{endpointAngler}}/{{anglerId}} HTTP/1.1
+x-api-key: test
+
+###
+# delete the user
+DELETE {{endpointUser}}/{{userId}} HTTP/1.1
+x-api-key: test
+

@@ -74,19 +74,24 @@ export const locationZSchema = z.object({
 
 export const createAnglerZSchema = z.object({
   /**
- * @openapi
- * components:
- *   schemas:
- *     CreateAnglerInput:
- *       type: object
- *       required:
- *         - name
- *       properties:
- *         name:
- *           type: string
- *           example: David
- */
+   * @openapi
+   * components:
+   *   schemas:
+   *     CreateAnglerInput:
+   *       type: object
+   *       required:
+   *         - user
+   *         - name
+   *       properties:
+   *         user:
+   *           type: string
+   *           example: 670a1f3c9d1e4b0012a1b001
+   *         name:
+   *           type: string
+   *           example: David
+   */
 
+  user: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid user ID'),
   name: z.string().trim().min(2).max(50),
 });
 
