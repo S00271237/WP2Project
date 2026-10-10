@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 const anglerService = new AnglerService();
 
 export class AnglerController {
-    getAnglers = async (req: Request, res: Response): Promise<void> => {
+    getAnglers = async (res: Response): Promise<void> => {
 
  /**
  * @openapi

@@ -6,7 +6,7 @@ import { UserService } from '../services/users';
 const userService = new UserService();
 
 export class UserController {
-getUsers = async (req: Request, res: Response): Promise<void> => {
+getUsers = async (res: Response): Promise<void> => {
   /**
    * @openapi
    * /users:
