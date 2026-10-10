@@ -13,8 +13,18 @@ const options: swaggerJSDoc.Options = {
                 url: "/api/v1",
             },
         ],
+        components: {
+            securitySchemes: {
+                ApiKeyAuth: {
+                    type: 'apiKey',
+                    in: 'header',
+                    name: 'x-api-key',
+                },
+            },
+        },
+        security: [{ ApiKeyAuth: [] }],
     },
-        apis: ['./src/controllers/*.ts', './src/models/*.ts']
+    apis: ['./src/controllers/*.ts', './src/models/*.ts']
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

@@ -223,7 +223,7 @@ updateUserRole = async (req: Request, res: Response): Promise<void> => {
   /**
    * @openapi
    * /users/{id}/role:
-   *   patch:
+   *   put:
    *     summary: Update a user's role by ID
    *     tags:
    *       - Users
