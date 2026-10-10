@@ -101,10 +101,12 @@ const sessionBaseZSchema = z.object({
   catches: z.array(catchZSchema).default([]),
 });
 
-export const createSessionZSchema = sessionBaseZSchema.refine(
-  (s) => !s.endTime || s.endTime > s.startTime,
-  { message: 'endTime must be after startTime', path: ['endTime'] }
-);
+export const createSessionZSchema = z.object({
+  location: locationZSchema,
+  startTime: z.coerce.date(),
+  endTime: z.coerce.date().optional(),
+  catches: z.array(catchZSchema).default([]),
+});
 
 export const updateSessionZSchema = sessionBaseZSchema.partial();
 
