@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth';
-import jwt from 'jsonwebtoken';
-import { env } from '../config/env';
-import { UnauthorizedError, UserAlreadyExistsError } from '../utils/apperrors';
+
 
 
 
