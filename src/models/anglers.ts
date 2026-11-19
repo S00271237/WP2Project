@@ -60,12 +60,6 @@ const anglerSchema = new Schema<IAngler>(
 
 
 // Zod schemas for validation
-export const catchZSchema = z.object({
-  species: z.string().trim().min(1),
-  quantity: z.number().int().min(1).default(1),
-  sizeCm: z.number().min(0).optional(),
-  bait: z.string().trim().optional(),
-});
 
 export const locationZSchema = z.object({
   area: z.string().trim().min(1),
@@ -90,30 +84,34 @@ export const createAnglerZSchema = z.object({
    *           type: string
    *           example: David
    */
-
+body: z.object({
   user: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid user ID'),
   name: z.string().trim().min(2).max(50),
+}),
 });
 
 export const updateAnglerZSchema = z.object({
+  body: z.object({
   name: z.string().trim().min(2).max(50).optional(),
+  }),
 });
 
-const sessionBaseZSchema = z.object({
-  location: locationZSchema,
+export const sessionBaseZSchema = z.object({
+  location: z.object({
+    area: z.string().min(1),
+    waterBody: z.string().min(1),
+  }),
   startTime: z.coerce.date(),
   endTime: z.coerce.date().optional(),
-  catches: z.array(catchZSchema).default([]),
 });
 
 export const createSessionZSchema = z.object({
-  location: locationZSchema,
-  startTime: z.coerce.date(),
-  endTime: z.coerce.date().optional(),
-  catches: z.array(catchZSchema).default([]),
+  body: sessionBaseZSchema,
 });
 
-export const updateSessionZSchema = sessionBaseZSchema.partial();
+export const updateSessionZSchema = z.object({
+  body: sessionBaseZSchema.partial(),
+});
 
 /**
  * @openapi
@@ -162,6 +160,18 @@ export const updateSessionZSchema = sessionBaseZSchema.partial();
  */
 
 
+export const catchZSchema = z.object({
+  body: z.object({
+  species: z.string().trim().min(1),
+  quantity: z.number().int().min(1).default(1),
+  sizeCm: z.number().min(0).optional(),
+  bait: z.string().trim().optional(),
+  }),
+});
+
+export const addCatchZSchema = z.object({
+  body: catchZSchema,
+});
 
 export const updateCatchZSchema = z.object({
   /**
@@ -186,11 +196,7 @@ export const updateCatchZSchema = z.object({
    *           type: string
    *           example: Spinner
    */
-
-  species: z.string().trim().min(1).optional(),
-  quantity: z.number().int().min(1).optional(),
-  sizeCm: z.number().min(0).optional(),
-  bait: z.string().trim().optional(),
+  body: catchZSchema.partial(),
 });
 
 export const AnglerModel = model<IAngler>('Angler', anglerSchema);
