@@ -1,81 +1,72 @@
 import { Schema, model } from 'mongoose';
 import { z } from 'zod';
 
-export type UserRole = 'user' | 'admin';
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     RegisterInput:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: Una
+ *         email:
+ *           type: string
+ *           example: una@example.com
+ *         password:
+ *           type: string
+ *           example: difficult password
+ *     LoginInput:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: una@example.com
+ *         password:
+ *           type: string
+ *           example: difficult password
+ */
 
-export interface IUser {
-  email: string;
-  password: string;
-  role: UserRole;
-}
+
+export const registerZSchema = z.object({
+  body: z.object({
+    name: z.string().min(1),
+    email: z.email().toLowerCase(),
+    password: z.string().min(6).max(64),
+  }),
+});
+
+export const loginZSchema = z.object({
+  body: z.object({
+    email: z.email().toLowerCase(),
+    password: z.string().min(1).max(64),
+  }),
+});
+
 
 const userSchema = new Schema<IUser>(
   {
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true, select: false },
+    name: { type: String, required: true },
+    email: { type: String, required: true, lowercase: true, trim: true, unique : true },
+    passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
   },
   { timestamps: true }
 );
 
-export const createUserZSchema = z.object({
-  /**
- * @openapi
- * components:
- *   schemas:
- *     RegisterUserInput:
- *       type: object
- *       required:
- *         - email
- *         - password
- *       properties:
- *         email:
- *           type: string
- *           format: email
- *           example: david@example.com
- *         password:
- *           type: string
- *           minLength: 8
- *           example: test1234
- */
-
-  email: z.string().trim().toLowerCase().email(),
-  password: z.string().min(8),
-});
-
-export const loginUserZSchema = z.object({
-  /**
- * @openapi
- * components:
- *   schemas:
- *     LoginUserInput:
- *       type: object
- *       required:
- *         - email
- *         - password
- *       properties:
- *         email:
- *           type: string
- *           format: email
- *           example: david@example.com
- *         password:
- *           type: string
- *           example: test1234
- */
-
-  email: z.string().trim().toLowerCase().email(),
-  password: z.string().min(1),
-});
-
-export const updateUserZSchema = z.object({
-  email: z.string().trim().toLowerCase().email().optional(),
-  password: z.string().min(8).optional(),
-});
-
-
-
-export const updateUserRoleZSchema = z.object({
-  role: z.enum(['user', 'admin']),
-});
+export interface IUser {
+  name: string;
+  email: string;
+  passwordHash: string;
+  role: 'user' | 'admin';
+}
 
 export const UserModel = model<IUser>('User', userSchema);
