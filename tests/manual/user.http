@@ -106,8 +106,8 @@ Content-Type: application/json
 x-api-key: test
 
 {
-  "user": "{{userId}}",
-  "name": "David"
+  "user": "6aff6e4996b03a7f9980b3af",
+  "name": "una"
 }
 
 ###

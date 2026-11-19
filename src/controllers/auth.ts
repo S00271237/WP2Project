@@ -97,10 +97,10 @@ export class AuthController {
   };
 
 
-  getUsers = async (req: Request, res: Response): Promise<void> => {
-      // req.user was set by authenticateJWT
-      const user = await authService.getUserById(req.user!.sub);
-  }
+getUsers = async (req: Request, res: Response): Promise<void> => {
+    const users = await authService.getAllUsers();
+    res.status(200).json(users);
+};
 
 
 }

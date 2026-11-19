@@ -7,9 +7,6 @@ import { registerZSchema } from '../models/users';
 
 import { loginZSchema } from '../models/users';
 import { authenticateJWT } from '../middleware/auth.middleware';
- 
-
-
 
 const router = Router();
 const authController = new AuthController();

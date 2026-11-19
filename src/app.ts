@@ -14,7 +14,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import {swaggerSpec} from './config/swagger';
 
-import userRoutes from './routes/users';
+import authRoutes from './routes/users';
 
 
 
@@ -24,6 +24,7 @@ const port = env.port
 
 const app: Application = express(); 
 
+app.use(express.json());
 
 
 app.get("/ping", async (_req : Request, res: Response) => { 
@@ -42,6 +43,11 @@ swaggerUi.serve,
 swaggerUi.setup(swaggerSpec)
 );
 
+app.use(authenticateKey);
+app.use(middleware);
+app.use('/api/v1/anglers', middleware, anglerRoutes);
+app.use('/api/v1/auth', middleware, authRoutes);
+
 const startServer = async () => {
   await connectDB();
 
@@ -52,10 +58,5 @@ const startServer = async () => {
 };
 
 startServer();
-app.use(middleware, anglerRoutes);
-app.use(express.json());
-app.use(authenticateKey);
-app.use('/api/v1/anglers', anglerRoutes)
-app.use('/api/v1/users', userRoutes);
 
 export { app };

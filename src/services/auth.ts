@@ -72,6 +72,10 @@ async getUserById(id: string): Promise<PublicUser> {
     if (!user) throw new UnauthorizedError('User not found');
     return { _id: user._id.toString(), name: user.name, email: user.email, role: user.role };
   }
+  
+  async getAllUsers() {
+    return UserModel.find();
+}
 
 
     async login(email: string, password: string): Promise<string> {
