@@ -9,6 +9,7 @@ import {
   updateCatchZSchema 
 } from '../models/anglers';
 import { validate } from '../middleware/validate.middleware';
+import { authenticateJWT } from '../middleware/auth.middleware';
 
 const router = Router();
 const anglerController = new AnglerController();
@@ -16,6 +17,7 @@ const anglerController = new AnglerController();
 // Angler Profile Routes
 router.get('/', anglerController.getAnglers);
 router.post('/', validate(createAnglerZSchema), anglerController.createAngler);
+router.get('/me', authenticateJWT, anglerController.getMyAngler);
 router.get('/:id', anglerController.getAnglerById);
 router.put('/:id', validate(updateAnglerZSchema), anglerController.updateAngler);
 router.delete('/:id', anglerController.deleteAngler);

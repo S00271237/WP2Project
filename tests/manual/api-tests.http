@@ -19,9 +19,9 @@ Content-Type: application/json
 x-api-key: {{apiKey}}
 
 {
-  "name": "Dave",
-  "email": "dave1@example.com",
-  "password": "SecurePassword123"
+  "name": "john",
+  "email": "jone@example.com",
+  "password": "test12"
 }
 
 ### register the same email again (expect 409)

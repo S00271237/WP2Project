@@ -76,6 +76,44 @@ getAnglerById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+getMyAngler = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @openapi
+   * /anglers/me:
+   *   get:
+   *     summary: Retrieve the angler profile of the logged-in user
+   *     tags:
+   *       - Anglers
+   *     responses:
+   *       200:
+   *         description: Successfully retrieved the angler
+   *       401:
+   *         description: Missing or invalid token
+   *       404:
+   *         description: This user has no angler profile
+   *       500:
+   *         description: Internal server error
+   */
+  try {
+    const userId = req.user?.sub; // match whatever your JWT middleware sets
+    if (!userId) {
+      res.status(401).json({ message: 'Not authenticated' });
+      return;
+    }
+
+    const angler = await anglerService.getAnglerByUserId(userId);
+    if (!angler) {
+      res.status(404).json({ message: 'This user has no angler profile' });
+      return;
+    }
+
+    res.status(200).json(angler);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving angler' });
+  }
+};
+
 createAngler = async (req: Request, res: Response): Promise<void> => {
 /**
  * @openapi

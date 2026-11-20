@@ -6,8 +6,6 @@ import { env } from './config/env';
 
 import { connectDB } from './config/database';
 
-import {authenticateKey} from './middleware/auth.middleware';
-
 import { middleware } from './middleware/middleware';
 
 import swaggerUi from 'swagger-ui-express';
@@ -15,6 +13,8 @@ import swaggerUi from 'swagger-ui-express';
 import {swaggerSpec} from './config/swagger';
 
 import authRoutes from './routes/users';
+
+import cors from 'cors';
 
 
 
@@ -25,6 +25,7 @@ const port = env.port
 const app: Application = express(); 
 
 app.use(express.json());
+app.use(cors());
 
 
 app.get("/ping", async (_req : Request, res: Response) => { 
@@ -43,7 +44,6 @@ swaggerUi.serve,
 swaggerUi.setup(swaggerSpec)
 );
 
-app.use(authenticateKey);
 app.use(middleware);
 app.use('/api/v1/anglers', middleware, anglerRoutes);
 app.use('/api/v1/auth', middleware, authRoutes);
